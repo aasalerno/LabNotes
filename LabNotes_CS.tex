@@ -1,4 +1,4 @@
-\documentclass[pra,11 pt]{revtex4-1}
+\documentclass[11 pt]{article}
 
 \usepackage{titlesec}
 \usepackage[dvipdfmx]{graphicx}
@@ -8,6 +8,7 @@
 \usepackage{enumerate}
 \usepackage{grffile}
 \usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
 \title{Lab Notes for Compressed Sensing Coding}
 
 
@@ -44,6 +45,10 @@
 \clearpage
 \newpage
 
+\tableofcontents
+
+\newpage
+
 \section{Proof of Principle (02.17.15 - 02.23.15)}
 
 \bo{Introduction}\\
@@ -60,12 +65,12 @@ The notes state that we are to:
 
 \noindent Note that the git repository for this work can be found at \url{https://github.com/aasalerno/Lustig}. For pre-emptive notes on the code that Lustig wrote, please see \verb!demo_SheppLoganTV_Notes.txt!. \\ \\
 
-
-\bo{Hypothesis}\\
+\subsection{Preamble...}
+\subsubsection{Hypothesis}
 To begin, today we should be able to get a decent code running that can do Lustig's code on any specified slice that we choose. I expect that the code will work as expected and provide a good rendition of the undersampled data with minimal alterations required. The hope is that we can use the basis of the code as an engine (that will need some optimization) in order to work with the data as we so hope.
 
 
-\bo{Notes - Unpolished}\\
+\subsubsection{Notes - Unpolished}
 First spent a ridiculous amount of time getting \LaTeX up and running on this computer... But it works now! 
 
 The code is written both on my computer as well as on the lab computers -- via a central git on github -- using the same datasets as required. The datasets in use are Jacob's data, reconstructed purely using the standard recon algorithm (that is, no \matlab involved).
@@ -109,28 +114,26 @@ After changing to Lustig's method of undersampling, we see some bigger differenc
 
 As it stands -- 4:00PM 02/23/15 -- this is as far as I can go without further understanding how well everything is going to work for the perpendicular and parallel to the gradient direction for the undersampling technique.
 
-
-\newpage
-\bo{\emph{Simulations}}\\
-
-\bo{Introduction}\\
+\subsection{Simulations}
+\subsubsection{Preamble}
 Here what we want to ensure is that by applying specific filters, we are obtaining what we expect. The expectation is that using a mask that is parallel to the gradient direction (applied in $k$-space) is going to look significantly worse than a mask applied perpendicular to the gradient direction.
 
-\bo{Hypothesis}\\
+\subsection{Hypothesis}
 Using a simulation, we will be able to tell distinct differences beteween the use of the two different maps. The map using a perpendicular mask on the undersampled $k$-space will look better than the data undersampled using the parallel mask, as the smearing will not be as bad in the cross direction of the diffusion.
 
 The code is written in \verb!buildLambda.m!. It is currently built just to handle a 2D case and then \emph{eventually} handled to build a 3D. In order to make it work with the code, an idea is to make it have a $z$-stack (in our case, a $y$ stack, or a `read-out" stack). \\ \\ 
 
-\section{Analysis of CS Code -- Further Applications? (03.10.15)}
+\section{Analysis of CS Code -- Sanity Check (03.10.15)}
 \noindent Date: 03/10/15
 
+\subsection{Preamble...}
 As of this point, I've finally given my seminar (which apparently went well!) and now, I'm trying to see if there's something inherently wrong with how I'm running my CS codes, as they aren't producing the effects that I would expect. The noise looks \emph{really} weird, and isn't how I'd expect it to be.
 
 So, for today, we are going to change things up a bit, and move on to try and understand exactly what's happening in this code -- I will try to include figures where I believe it makes sense due to the simplicity of doing so.
 
 In order to simplify things, I made a file using the raw data from Jacob's Diffusion Weighted Imaging data taken on July 29, 2014. The raw data files are located in \\ \verb!/projects/muisjes/asalerno/CS/data!. Specifically we are using brain 10, direction 32. This brain was chosen to be the simplest of cases, as this is a $b_0$ scan, thus there is no expected major differences because of the lack of diffusion weighting.
 
-\newpage
+\subsection{Down-sampling}
 One \emph{major} thing to note is the effect that down-sampling has. We can see it here:
 
 % Effects of downsampling figure
@@ -150,6 +153,7 @@ The downsampling is absolutely required because of how the wavelet transform is 
 
 It seems like \matlab does something a little weird with how it downsamples the FFT... It produces what looks like just a blurred copy of the image (as seen above) but it doesn't seem to get the data from the center, but instead chooses the data in the top right section (before shifting) preferentially. This can be seen in Figure 2.
 
+\newpage
 \begin{figure}[h] 
 
   \centering
@@ -157,11 +161,13 @@ It seems like \matlab does something a little weird with how it downsamples the 
   \setlength\fboxsep{0pt}
   \setlength\fboxrule{0.5pt}
   \includegraphics[trim = {36mm 20mm 20mm 8mm},clip,scale = 0.6] {Figs/CS_DTI_Sims/FullvsMatvsCent.jpg}
-  \caption{In this figure, we see some small differences between the method of undersampling done in \matlab vs a logical undersampling method that takes the data from the centre of $k$-space.}
+  \caption{In this figure, we see some small differences between the method of undersampling done in \matlab vs a logical undersampling method that takes the data from the center of $k$-space. All data here taken from slice 150 \emph{after} doing a 1D FFT in the readout direction.}
   \label{fig:matvscent}
 
 \end{figure}
 
+We can see in the above figure that \matlab does something really weird and so, we will be using my method in order to do reconstructions that alter the number of voxels per dimension.
 
+In order to make sure that we're using the right one, the file we must use is \verb!kspaceDS.10.32.mat!, as this is the dataset that has been undersampled properly. For this work, what we will do right now, is look at how we can try to do a reconstruction properly using compressed sensing. We may be able to do this logically using some of the existing work here. In the angiography case, they use the previous slice as the base image as "not much is expected to change". We can do better than this, as we can try to do a combined reconstruction, where the $b_0$ average of the same slice (to start) would be the same. 
 
 \end{document}
