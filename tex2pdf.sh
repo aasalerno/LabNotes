@@ -1,5 +1,6 @@
 #!/bin/bash
 function tex2pdf {
   latex $1.tex;
-  dvipdfmx $1.dvi;
+  dvips -z $1.dvi -o $1.ps;
+  ps2pdf $1.ps $1.pdf
   }
