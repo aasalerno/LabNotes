@@ -239,7 +239,7 @@ To begin, today we should be able to get a decent code running that can do Lusti
     % Talk about this more.
     Upon comparing all of our datasets, we found that the square and the circle gave the smallest RMS error. This can be seen via a bar chart -- this chart combined all the ROIs from all directions (doing the fully sampled - undersampled), and and ran an RMS on all of the data.
     
-    \begin{figure}
+    \begin{figure}[!h]
       \centering
       \vspace{0pt}
       \setlength\fboxsep{0pt}
@@ -249,25 +249,42 @@ To begin, today we should be able to get a decent code running that can do Lusti
       \label{fig:RMSPhant}
 
   \end{figure}
-  
-  \begin{figure}
+    
+    For these plots, we used a ROI that just covered the circle -- quite tightly -- so that we didn't have much of a confounding factor. We still saw, though, that the ``circle in the centre" (as seen in the next plot) was the best method to reduce the error that we get in our data.
+    
+  \begin{figure}[!h]
       \centering
       \vspace{0pt}
       \setlength\fboxsep{0pt}
       \setlength\fboxrule{0.5pt}
       \includegraphics[trim = {10mm 0mm 10mm 0mm},clip,scale = 0.4] {Figs/numericalSims/DiffFilts.eps}
       \caption{The different filters that we used for the plots. It is noted that the codes used almost no roll off.}
-      \label{fig:RMSPhant}
+      \label{fig:USFilts}
 
   \end{figure}
-  
+    
+    \newpage
     \subsubsection{Brain Data}
     
+    When proceeding to brain data, I expect that we would ge the same results. Using data that can be found in \verb!/projects/muisjes/asalerno/CS/data!, and undersampling methods that can be found in \verb!/micehome/asalerno/Documents/CompressedSensing!, we ran the same undersampling techniques, but got some interesting results. The elps method is now \emph{worse} than the strip method! Reasons for this are currently unknown. The dataset being shown is brain 2, all 30 directions, however, this can (and will) be redone for more brains in order to get a more realistic understanding of what's happening.
+    
+    \begin{figure}[h]
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {10mm 0mm 10mm 0mm},clip,scale = 0.4] {Figs/numericalSims/brainRMS.eps}
+      \caption{RMS error from fully sampled data in comparison to the fully sampled case.}
+      \label{fig:RMSBrain}
+
+    \end{figure}
     
   
   \subsection{Discussion}
   
-  Surprisingly, we didn't particularly get what we expected. When running the simulation for the numerical phantom, the data didn't seem very different at all -- at least when comparing FA values. The data actually gave us results that were confounding... When being compared to the ``standard" methods of undersampling (i.e. Circular or low resolution undersampling), the parallel and perpendicular cases fell through and were not effective. However, we may be able to find some ``happy medium", as there may be an elliptical technique that has the lower RMS error of the circular technique, but the specificity of the directionally specific techniques.
+  Surprisingly, we didn't particularly get what we expected. When running the simulation for the numerical phantom, the data didn't seem very different at all -- at least when comparing FA values. The data actually gave us results that were confounding... When being compared to the ``standard" methods of undersampling (i.e. Circular or low resolution undersampling), the parallel and perpendicular cases fell through and were not effective. However, even when looking for a ``happy medium" -- an elliptical technique, which we expect would have the lower RMS error of the circular technique, but the specificity of the directionally specific techniques -- we don't find that (with $n = 1$ for brains tested).
+  
+  
   
   
 
