@@ -16,6 +16,7 @@
     urlcolor=black
 }
 \usepackage[margin=1in]{geometry}
+\usepackage[font={scriptsize}]{caption}
 \title{Lab Notes for Compressed Sensing Coding}
 
 
@@ -189,9 +190,7 @@ To begin, today we should be able to get a decent code running that can do Lusti
 
   \subsection{Hypothesis}
 
-  The expectation is that the best style would be to use the ``parallel to the gradient direction" as this will give us the sharpest edge information in order to tell a cross section of the fibres that we are expecting to see. The worst should be the ``perpendicular" case. It is noted that our nomenclature from before was misleading.
-
-  In order to ensure that we have it correctly, the following figure explains what is meant by each.
+  The expectation is that the best style would be to use the ``parallel to the gradient direction" as this will give us the sharpest edge information in order to tell a cross section of the fibres that we are expecting to see. The worst should be the ``perpendicular" case. It is noted that our nomenclature from before was misleading. In order to ensure that we have it correctly, the following figure explains what is meant by each.
 
   % Directionality! figure
     \begin{figure}[h] 
@@ -210,8 +209,58 @@ To begin, today we should be able to get a decent code running that can do Lusti
   
     \subsubsection{Numerical Simulations}
     
+    For the numerical simulations, we started with a phantom that was comprised of three parts. The phantom can be seen in the following image.
+    
+    \begin{figure}[!h] 
+
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {0mm 0mm 0mm 0mm},clip,scale = 0.8] {Figs/numericalSims/Phantom.eps}
+      \caption{This figure is the numerical phantom that we used. Region (A) represents an area of all zero data, used to serve as a reference point when plotting the figure (it forces the dynamic range to begin at zero). Region (B) represents an area of isotropic diffusion, where $\lambda_1 = \lambda_2 = \lambda_3 = 10^{-3}$. This area should have an FA value of zero. Region (C) represents an area with restricted diffusion, where $\lambda_1 = 10^{-3}$, but $\lambda_2 = \lambda_3 = 5 \times 10^{-4}$. This gives a theoretical FA value of approx $0.41$. It is noted that the $b$ value used in this experiment was 1917 $\frac{\text{s}}{\text{mm}^2}$}
+      \label{fig:NumPhant}
+
+  \end{figure}
     
     
+    When we worked with this data, we used multiple different types of undersampling filters, and compared them to the fully sampled case. The ones that we used are:
+    \begin{itemize}
+      \item Circle
+      \item Square
+      \item Parallel Strip
+      \item Perpendicular Strip
+      \item Parallel Ellipse
+      \item Perpendicular Ellipse
+    \end{itemize}
+
+    For the two ellipses, it is noted that the long axis to short axis ratio was set to be 2 (i.e. a/b = 2 if $\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1$). It is also noted that $x$ and $y$ here are those of the axis rotated relative the gradient vector direction.
+    
+    % Talk about this more.
+    Upon comparing all of our datasets, we found that the square and the circle gave the smallest RMS error. This can be seen via a bar chart -- this chart combined all the ROIs from all directions (doing the fully sampled - undersampled), and and ran an RMS on all of the data.
+    
+    \begin{figure}
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {10mm 0mm 10mm 0mm},clip,scale = 0.4] {Figs/numericalSims/nSimRMS.eps}
+      \caption{This figure shows us how the RMS differs for the different undersampling types. We can see the undersampling types in the next figure.}
+      \label{fig:RMSPhant}
+
+  \end{figure}
+  
+  \begin{figure}
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {10mm 0mm 10mm 0mm},clip,scale = 0.4] {Figs/numericalSims/DiffFilts.eps}
+      \caption{The different filters that we used for the plots. It is noted that the codes used almost no roll off.}
+      \label{fig:RMSPhant}
+
+  \end{figure}
+  
     \subsubsection{Brain Data}
     
     
