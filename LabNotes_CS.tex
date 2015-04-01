@@ -47,7 +47,7 @@
     \begin{center}
       {\huge {Lab Notes for Compressed Sensing Coding}}\\[0.5cm]
       {\large {Anthony Salerno}}\\[0.4cm]
-      \today
+      02.17.15 - \today
     \end{center}
     \vspace*{\fill}
   \end{titlepage}
@@ -180,7 +180,7 @@ To begin, today we should be able to get a decent code running that can do Lusti
 
   In order to make sure that we're using the right one, the file we must use is \verb!kspaceDS.10.32.mat!, as this is the dataset that has been undersampled properly. For this work, what we will do right now, is look at how we can try to do a reconstruction properly using compressed sensing. We may be able to do this logically using some of the existing work here. In the angiography case, they use the previous slice as the base image as "not much is expected to change". We can do better than this, as we can try to do a combined reconstruction, where the $b_0$ average of the same slice (to start) would be the same. 
 
-\section{Simulations - (03.11.15)}
+\section{Simulations - (03.11.15 - 04.01.15)}
 \noindent 03.23.15 (work completed on and before 03.19.15)
   \subsection{Preamble}
 
@@ -258,7 +258,7 @@ To begin, today we should be able to get a decent code running that can do Lusti
       \setlength\fboxsep{0pt}
       \setlength\fboxrule{0.5pt}
       \includegraphics[trim = {10mm 0mm 10mm 0mm},clip,scale = 0.4] {Figs/numericalSims/DiffFilts.eps}
-      \caption{The different filters that we used for the plots. It is noted that the codes used almost no roll off.}
+      \caption{The different filters that we used for the plots. It is noted that the codes used almost no roll off. For this example, we are assuming the gradient direction to be totally vertical.}
       \label{fig:USFilts}
 
   \end{figure}
@@ -282,8 +282,13 @@ To begin, today we should be able to get a decent code running that can do Lusti
   
   \subsection{Discussion}
   
-  Surprisingly, we didn't particularly get what we expected. When running the simulation for the numerical phantom, the data didn't seem very different at all -- at least when comparing FA values. The data actually gave us results that were confounding... When being compared to the ``standard" methods of undersampling (i.e. Circular or low resolution undersampling), the parallel and perpendicular cases fell through and were not effective. However, even when looking for a ``happy medium" -- an elliptical technique, which we expect would have the lower RMS error of the circular technique, but the specificity of the directionally specific techniques -- we don't find that (with $n = 1$ for brains tested).
+  \noindent 03.25.15 - 04.01.15
+  Surprisingly, we didn't particularly get what we expected. When running the simulation for the numerical phantom, the data didn't seem very different at all -- at least when comparing FA values. The data actually gave us results that were confounding... When being compared to the ``standard" methods of undersampling (i.e. Circular or low resolution undersampling), the parallel and perpendicular cases fell through and were not effective. However, even when looking for a ``happy medium" -- an elliptical technique, which we expect would have the lower RMS error of the circular technique, but the specificity of the directionally specific techniques -- we don't find that (with $n = 4$ for brains tested).
   
+  
+  \subsection{Other Notes}
+  
+  Due to space constraints, I've had to delete a lot of the (extraneous) data from the folders. I removed all of Jacob's recons (as they're unimportant, and stored elsewhere). I also deleted (inadvertantly) the FA map that I produced for it, but all in all, it wasn't that important anyway. Since it is so easy to reproduce from the original information (i.e. the fully sampled case) I'm also getting rid of the undersampled real and imaginary data. 
   
   
   

@@ -1,0 +1,89 @@
+\documentclass[11 pt]{article}
+
+\usepackage{titlesec}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{bmpsize}
+\usepackage{amsmath,mathrsfs}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{grffile}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage[margin=1in]{geometry}
+\usepackage[font={scriptsize}]{caption}
+
+
+\newcommand{\me}{\mathrm{e}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\sectionbreak}{\clearpage\newpage}
+\newcommand{\mitem}{\item[--]}
+\newcommand{\bo}{\noindent\textbf}
+\newcommand{\etal}{\emph{et. al.}}
+\newcommand{\matlab}{\textsc{Matlab }}
+\let\oldsection\section
+\renewcommand\section{\clearpage\newpage\oldsection}
+
+\usepackage[nodisplayskipstretch]{setspace}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhead[R]{Salerno}
+\fancyhead[C]{Lab Notes for Compressed Sensing Coding}
+\fancyhead[L]{MICe}
+
+\begin{document}
+
+{\large{Timeline}}
+
+      
+\begin{enumerate}
+
+      \item \bo{Finish with simulations}\\
+	    \emph{Due: 04.02.15}
+	    \begin{itemize}
+      
+		  \item As of 04.01.15 I think I'm done with these... The best method has been figured out and it's just doing it via the circle
+      
+	    \end{itemize}
+      
+      
+      \item \bo{Figure out parameterization choices for CS}\\
+	    \emph{Due: 04.15.15}
+	    \begin{itemize}
+		  \item Understand what each parameter does fully
+		  \item Figure out why I'm getting poor results on the CS
+		  \item Likely a good idea to go through the math again -- figure out what is happening in the CS code
+		  \item Spend a day or two porting?
+		  \item Reading MINC files in would be easier
+		  \item More understanding around the lab on how it works 
+		  \item However, I'm not as proficient in python...
+		  \item \bo{THIS SHOULD BE DONE IN ONE WEEK (giving two to be safe)}
+	    \end{itemize}
+      
+      
+      \item \bo{Massage in 3D reconstructions}\\
+	    \emph{Due: 04.29.15}
+	    \begin{itemize}
+		  \item Analyze the 3D wavelet work that can be done in MATLAB
+		  \item Need to understand how the p2DFT and XFM classes work in Lustig's code in order to adapt them to work in 3D
+		  \item Run reconstructions on full data that has been undersampled
+		  \item Keep in mind that the undersampling doesn't occur in the readout direction
+	    \end{itemize}
+
+      
+      \item \bo{Look at different methods of adding in the extra term in the reconstruction}\\
+	    \emph{Due: 04.29.15} (possibly could be between \#2 and \#3)
+	    \begin{itemize}
+		  \item Is there anything that can be done to make the reconstruction have this extra term easily?
+		  \item A good form may be $\lambda_3 ||m_j - m_k||_2 (\vec{d_j} \cdot \vec{d_k})^2$
+	    \end{itemize}
+
+\end{enumerate}
+
+\end{document}
