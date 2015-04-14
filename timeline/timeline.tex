@@ -33,29 +33,34 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 
-\fancyhead[R]{Salerno}
-\fancyhead[C]{Lab Notes for Compressed Sensing Coding}
+\fancyhead[R]{Salerno \& Nieman}
+\fancyhead[C]{Timeline for Work}
 \fancyhead[L]{MICe}
 
 \begin{document}
 
-{\large{Timeline}}
+\noindent{\LARGE{Timeline}}
 
       
 \begin{enumerate}
-
-      \item \bo{Finish with simulations}\\
-	    \emph{Due: 04.02.15}
+	%1
+	\item \bo{Finish with simulations}\\
+	    \emph{Due: 04.09.15}
 	    \begin{itemize}
       
 		  \item As of 04.01.15 I think I'm done with these... The best method has been figured out and it's just doing it via the circle
-      
+		  \item As per meeting with Brian on 04.02.15 I should look into this a bit more -- not only should I look at the RMS data, but also the line profiles of them, as this may provide some interesting information about how well each one is doing
+		  \begin{itemize}
+			\item Brian noted this because the RMS has a tendency to strongly prefer the DC data, so the circle filter may be the most ``DC" similar to the fully sampled data.
+		  \end{itemize}
+	    
 	    \end{itemize}
       
-      
-      \item \bo{Figure out parameterization choices for CS}\\
-	    \emph{Due: 04.15.15}
+	%2
+	\item \bo{Figure out parameterization choices for CS}\\
+	    \emph{Due: 04.09.15 or TBA}
 	    \begin{itemize}
+		  \item \emph{The due date for this has been pushed forward because Brian isn't sure if it will be required. Notes will be made at a future time}
 		  \item Understand what each parameter does fully
 		  \item Figure out why I'm getting poor results on the CS
 		  \item Likely a good idea to go through the math again -- figure out what is happening in the CS code
@@ -63,13 +68,34 @@
 		  \item Reading MINC files in would be easier
 		  \item More understanding around the lab on how it works 
 		  \item However, I'm not as proficient in python...
-		  \item \bo{THIS SHOULD BE DONE IN ONE WEEK (giving two to be safe)}
+		  %\item \bo{THIS SHOULD BE DONE IN ONE WEEK (giving two to be safe)}
+	    \end{itemize}
+      
+      %3
+      \item \bo{Simulation for Random US method}
+	    \begin{itemize}
+		  \item The purpose of this is to see how well we can reconstruct an image based on a solid angle of data
+		  \item Brian stated that we will need to be proficient in how we do this and a lot of thought will need to go into it.
 	    \end{itemize}
       
       
-      \item \bo{Massage in 3D reconstructions}\\
+      %4
+       \item \bo{Look at different methods of adding in the extra term in the reconstruction}\\
 	    \emph{Due: 04.29.15}
 	    \begin{itemize}
+		  \item Is there anything that can be done to make the reconstruction have this extra term easily?
+		  \item Ideas for forms:
+		  \begin{itemize}
+		      \item $\lambda_3 ||m_j - m_k||_2 (\vec{d_j} \cdot \vec{d_k})^2$
+		      \item $\me^{\frac{-\alpha_{ij}^2}{2\sigma^2}}$
+		  \end{itemize}
+	    \end{itemize}
+      
+      %5
+      \item \bo{Massage in 3D reconstructions}\\
+	    \emph{Due: Later...}
+	    \begin{itemize}
+		  \item \emph{Brian stated this should be a final step}
 		  \item Analyze the 3D wavelet work that can be done in MATLAB
 		  \item Need to understand how the p2DFT and XFM classes work in Lustig's code in order to adapt them to work in 3D
 		  \item Run reconstructions on full data that has been undersampled
@@ -77,12 +103,7 @@
 	    \end{itemize}
 
       
-      \item \bo{Look at different methods of adding in the extra term in the reconstruction}\\
-	    \emph{Due: 04.29.15} (possibly could be between \#2 and \#3)
-	    \begin{itemize}
-		  \item Is there anything that can be done to make the reconstruction have this extra term easily?
-		  \item A good form may be $\lambda_3 ||m_j - m_k||_2 (\vec{d_j} \cdot \vec{d_k})^2$
-	    \end{itemize}
+
 
 \end{enumerate}
 
