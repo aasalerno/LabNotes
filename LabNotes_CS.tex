@@ -290,7 +290,60 @@ To begin, today we should be able to get a decent code running that can do Lusti
   
   Due to space constraints, I've had to delete a lot of the (extraneous) data from the folders. I removed all of Jacob's recons (as they're unimportant, and stored elsewhere). I also deleted (inadvertantly) the FA map that I produced for it, but all in all, it wasn't that important anyway. Since it is so easy to reproduce from the original information (i.e. the fully sampled case) I'm also getting rid of the undersampled real and imaginary data. 
   
+  \subsection{Post-Meeting Notes}
   
+  \emph{Meeting Date: 04.01.15}\\
+  Brian stated that I should do some work on looking at the line profiles of everything that has been done because RMS is akin to looking primarily at DC information. This should give us a better rendition of what we want because we're interested in the edges more than the DC informaion. 
+  
+
+\section{Directional Continuum Sampling}
+  
+  \noindent 04.14.15
+  \subsection{Preamble}
+    
+    \subsubsection{Basis}
+      The idea behind what this method of acquisition is that we won't necessarily need CS for a reconstruction. The notion is to use a continuum of directions, as opposed to a specific number of discrete directions --  while only taking a small number of points for each ``direction" we would be able to do a full reconstruction using a solid angle of points (and possibly, be able to shrink the required number of points by utilizing CS). 
+    
+    \subsubsection{Meeting Notes}
+      The notes are about building the simulation, as well as some wrk in relation to how to build the simulation. As of 04.14.15, I don't have a firm grasp of what I want to do and/or how I plan to do it. However, I believe that looking at PE tables (and including that in my solutions) will be a good method.
+      \begin{itemize}
+	  \item If CS is to be used, incorporate the directional information before we look at 3D recon. A possible form could be:\\
+		\[ \me^{-\frac{\alpha_{jk}^2}{2\sigma^2}}\]
+		Where $\alpha_{jk} = \angle\vec{d_j}\vec{d_k}$
+	  \item Do a weighted average to obtain the proper eigenvalues for the simulation \\
+      \end{itemize}
+    
+    \subsubsection{Meeting with Leigh}
+      After meeting with Leigh SN to discuss methods of how to best do something that would make sense with respect to the FSE acquisition method. She pointed me to an email from Brian and the locations of some tables. 
+      
+      \bo{Email from Brian}\\
+	\texttt{Hello Jacob et al,}\\\\
+	  \texttt{You can try the following command for generation of cylindrical FSE tables.}\\\\
+	   \verb!/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --cylindrical --etl 8 --etlorder 2,1,0,3,4,5,6,7 --angorder 256 256 test_nf64_etl8_256_256!\\\\
+	    \texttt{Obviously, you can replace “nf 64”, “etl 8”, “etlorder 2,1,0,3,4,5,6,7” and “256 256” (as well as the output filename) with numbers of your choice. nf should be divisible by etl.}\\\\
+	    \texttt{To view the tables and inspect for problems, you can use:}\\\\
+	    \verb!/home/bjnieman/source/vnmr/petable_display.py test_nf64_etl8_256_256_nf64_ni64!\\\\
+	    \texttt{Options —nacq and —etl <number> allow you to display the number of acquisitions (repeated in the table) or the echo number of each acquisition.}\\\\
+	    \texttt{Come to me if you have questions.}\\\\
+	\texttt{Brian}\\\\
+
+      
+      \bo{Email from Leigh}\\
+	\texttt{Here is the location of several different petables at 75 um (272 x 272 in the phase endoce, $xz$ plane):}\\\\
+    	    \verb!/home/leigh/cyltables/75um/angorder/LSN_E3_angorder_272_etl8_nf64_ni80!\\\\
+	    \verb!/home/leigh/cyltables/75um/cylaxisdist/LSN_E3_cylaxisdist_272_etl8_nf64_ni80!\\\\
+	    \verb!/home/leigh/cyltables/75um/pseudocyl/LSN_E3_pseudocyl_etl8_272_nf64_ni80!\\\\
+	    \texttt{If you need to look at all of the smaller tables (12 each) have a look in the parent folder, but know that there are a LOT of other tables in those folders, so just be careful to read the names carefully (they are different in the E3 E4 parts, where E3 means the third echo in the centre and E4 means the fourth).}\\\\
+	    \texttt{To make these tables I used the following commands:}\\\\
+	    \verb!/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --angorder --individ_table_limit 5120 --etlorder 2,1,0,3,4,5,6,7,8 272 272 --clobber LSN_E3_angorder_272_etl8!\\\\
+	    \verb!/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --cylaxisdist --individ_table_limit 5120 --etlorder 2,1,0,3,4,5,6,7,8 272 272 --cylaxisangle 90 --clobber LSN_E3_cylaxisdist_272_etl8!
+	    \texttt{NOTE, PSEUDOCYL IS A LITTLE DIFFERENT}\\\\
+	    \verb!/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --pseudocyl_pe2 --individ_table_limit 5120 --k0echo 3 --clobber 272 272 LSN_E3_pseudocyl_etl8_272!\\\\
+	    \texttt{Also, note that nf and the table axis (272) must be divisible by etl. These tables all have a resolution of 75 um.}\\\\
+	    \texttt{Let me know if you need anything else.}\\\\
+	\texttt{Leigh}\\\\
+
+      These locations as listed above will be used in order to find the information about the PE tables so I make sure that what I do is compatable with the scanner -- thus I'm not testing something that can't be done. 
   
 
 \end{document}
