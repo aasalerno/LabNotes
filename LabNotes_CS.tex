@@ -626,4 +626,54 @@ breaklines=true
 
             Once we get through the while loop via $\alpha$ and $\beta$ we update our data ($x$) and our gradients ($g_0$) and go through the calculations again with new starting criteria unless the $\ell_2$ of the gradient is less than $\epsilon$, or we've reached our iteration limit.
 
+% Section VI
+\section{Editing Lustig's Code}
+
+  For all of this work, the code has been moved to \texttt{CompressedSensing} -- anything from the aforementioned \texttt{CompressedSensing} folder has been moved to \texttt{MincMatlab} for a better naming scheme.  A ``safe version" of the code can be found in \texttt{Lustig/sparseMRI\_v0.2}.
+  
+  \subsection{Meeting With Brian (05/06/15)}
+    Brian has some ideas for what needs to be changed. It can be looked at as a few points.
+    \begin{itemize}
+      \item Weighting Function
+      \item Phase Correction
+        \begin{itemize}
+          \item Undersampled recon and smooth it out and look at the phase 
+          $
+          \theta = \tan^{-1}
+          \left(
+          \frac{\text{Im}(x_{ij})}
+               {\text{Re}(x_{ij})}
+               \right)
+          $
+          \item Generally, the phase correction that Leigh will apply should be done before this (this one makes sure that the phase is generally okay before we do anything else)
+          \end{itemize}
+
+      \item Make this work for multiple directions -- i.e. adapt the code to work in 3D
+      \end{itemize}
+
+  \subsection{Weighting Function}
+    We want the code to be able to work on all 30 directions simultaneously and have them be weighted according to how similar the gradient directions are. In order to make sure that this is absolutely viable, some minor edits had to be made to the \texttt{GradientVector.txt} file in order to make the magnitude of each vector as close to 1 as we can get them (currently, they are correct to $1 \pm 0.004$). 
+
+    The weighting function that we are planning on using has the form:
+    \[ \alpha = 
+    \me^
+    {-\frac{(\vec{d_i}\cdot\vec{d_j})^2 - 1}{2\sigma^2}} \]
+
+    A code for this is written, it is called \texttt{dotThresh.m}. It can be found in \texttt{./diffusion}. 
+
+    
+
+  \subsection{Phase Correction}
+    As per Brian, the way to calculate the phase would be to take the image (as it is real and imaginary) and do:
+
+    \[ P = \frac{s^*}{|s|} \]
+
+    Where $s$ represents the signal of the image. This is akin to multiplying by $\me^{-\phi(s)}$.
+
+    When I run the calculation using the above equation, it looks \emph{nothing} like what Lustig gets through his method. So, I want to talk this through with Brian, and see exactly what the best method here -- is what I'm doing correct?! Calculations for the phase can either be done Brian's or Lustig's way -- and can be found in \texttt{phCalc.m}. Currently, the code will do the phase calculation either way, based on \texttt{rl}, a parameter that is fed into it. 
+
+    I ran a quick check, testing the phase for different slices, and determined that (with the exception of the areas of zero-padding) the phases are different. 
+
+
+
 \end{document}
