@@ -8,6 +8,8 @@
 \usepackage{enumerate}
 \usepackage{grffile}
 \usepackage{hyperref}
+\usepackage{dsfont}
+\usepackage{url}
 \hypersetup{
     colorlinks,
     citecolor = black,
@@ -38,7 +40,7 @@ breaklines=true
 \makeatother
 \setcounter{secnumdepth}{5} % how many sectioning levels to assign numbers to
 \setcounter{tocdepth}{5}    % how many sectioning levels to show in ToC
-
+\setcounter{section}{-1}
 
 \newcommand{\me}{\mathrm{e}}
 \newcommand*\diff{\mathop{}\!\mathrm{d}}
@@ -68,7 +70,7 @@ breaklines=true
     \begin{center}
       {\huge {Lab Notes for Compressed Sensing Coding}}\\[0.5cm]
       {\large {Anthony Salerno}}\\[0.4cm]
-      02.17.15 - \today
+      February 17, 2015 - \today
     \end{center}
     \vspace*{\fill}
   \end{titlepage}
@@ -80,6 +82,22 @@ breaklines=true
 
 \newpage
 
+% Section O
+\section{Questions for Brian}
+  Here, I will include questions that I asked Brian based on the date of the meeting -- I'll also include a basic description of the topic within the subtopics for each set of questions and whatnot.
+
+  \subsection{Direction Based Gradient in the Objective Function}
+    \begin{enumerate}
+      \item The values that we get here are somewhat dependent on how many different directions we take. It's noted that this can be changed on the fly (which is nice) but what should be our default ``threshold" of the dot product to accept?
+
+      \item The values coming from this set are on the order of $10^{14}$, meanwhile, the gObj is an order of magnitude lower, and the TV and XFM are on the order of $10^9$. Do we need to normalize this value by the number of directions that we get?
+
+      \item For some reason, even though as a sum, the values should only be on the order of $10^{14}$, the summation of all of these terms gives a value on the order of $10^{16}$. This needs to be looked into. Regardless, this value is HIGH in comparison to our data ($10^4$), should this be of concern?
+
+      \item How should we change our analysis methods so that the XFM and TV weightings are comparable to the objective, and thus will actually have an effect?
+
+      \item What should we do to make the objective difference less. In the Shepp-Logan, the values are significantly lower (unless this is merely a by-product of having voxel values of $\sim10^4$)
+      \end{enumerate}
 
 
 % Section I
@@ -336,7 +354,7 @@ breaklines=true
 
 
 % Section IV
-\section{Directional Continuum Sampling}
+\section{Directional Continuum Sampling (04.14.15)}
   
   \noindent 04.14.15 -- Never completed
   \subsection{Preamble}
@@ -360,13 +378,13 @@ breaklines=true
       \bo{Email from Brian}\\
       	\texttt{Hello Jacob et al,}\\\\
       	  \texttt{You can try the following command for generation of cylindrical FSE tables.}\\\\
-      	   \begin{verbatim}/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --cylindrical --etl 8 --etlorder 2,1,0,3,4,5,6,7 --angorder 256 256 test_nf64_etl8_256_256
-           \end{verbatim}
+      	   \path{/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --cylindrical --etl 8 --etlorder 2,1,0,3,4,5,6,7 --angorder 256 256 test_nf64_etl8_256_256}
+           
            \hfill\\\\
       	    \texttt{Obviously, you can replace ``nf 64", ``etl 8", ``etlorder 2,1,0,3,4,5,6,7" and ``256 256" (as well as the output filename) with numbers of your choice. nf should be divisible by etl.}\\\\
             \texttt{To view the tables and inspect for problems, you can use:}\\\\
-      	    \begin{verbatim}/home/bjnieman/source/vnmr/petable_display.py test_nf64_etl8_256_256_nf64_ni64
-            \end{verbatim}
+      	    \path{/home/bjnieman/source/vnmr/petable_display.py test_nf64_etl8_256_256_nf64_ni64}
+            
             \hfill\\\\
       	    \texttt{Options -nacq and -etl <number> allow you to display the number of acquisitions (repeated in the table) or the echo number of each acquisition.}\\\\
       	    \texttt{Come to me if you have questions.}\\\\
@@ -375,21 +393,19 @@ breaklines=true
       
       \bo{Email from Leigh}\\
       	\texttt{Here is the location of several different petables at 75 um (272 x 272 in the phase encode, $xz$ plane):}\\\\
-          	\begin{verbatim}
-            /home/leigh/cyltables/75um/angorder/LSN_E3_angorder_272_etl8_nf64_ni80
+          	\path{/home/leigh/cyltables/75um/angorder/LSN_E3_angorder_272_etl8_nf64_ni80}
 
-      	    /home/leigh/cyltables/75um/cylaxisdist/LSN_E3_cylaxisdist_272_etl8_nf64_ni80
+      	    \path{/home/leigh/cyltables/75um/cylaxisdist/LSN_E3_cylaxisdist_272_etl8_nf64_ni80}
 
-      	    /home/leigh/cyltables/75um/pseudocyl/LSN_E3_pseudocyl_etl8_272_nf64_ni80
-            \end{verbatim}
+      	    \path{/home/leigh/cyltables/75um/pseudocyl/LSN_E3_pseudocyl_etl8_272_nf64_ni80}
+            
       	    \texttt{If you need to look at all of the smaller tables (12 each) have a look in the parent folder, but know that there are a LOT of other tables in those folders, so just be careful to read the names carefully (they are different in the E3 E4 parts, where E3 means the third echo in the centre and E4 means the fourth).}\\\\
       	    \texttt{To make these tables I used the following commands:}\\\\
-      	    \begin{verbatim}/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --angorder --individ_table_limit 5120 --etlorder 2,1,0,3,4,5,6,7,8 272 272 --clobber LSN_E3_angorder_272_etl8
+      	    \path{/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --angorder --individ_table_limit 5120 --etlorder 2,1,0,3,4,5,6,7,8 272 272 --clobber LSN_E3_angorder_272_etl8}
 
-      	    /home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --cylaxisdist --individ_table_limit 5120 --etlorder 2,1,0,3,4,5,6,7,8 272 272 --cylaxisangle 90 --clobber LSN_E3_cylaxisdist_272_etl8
-            \end{verbatim}
-      	    \texttt{NOTE, PSEUDOCYL IS A LITTLE DIFFERENT}\\\\
-      	    \verb!/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --pseudocyl_pe2 --individ_table_limit 5120 --k0echo 3 --clobber 272 272 LSN_E3_pseudocyl_etl8_272!\\\\
+      	    \path{/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --cylaxisdist --individ_table_limit 5120 --etlorder 2,1,0,3,4,5,6,7,8 272 272 --cylaxisangle 90 --clobber LSN_E3_cylaxisdist_272_etl8}\\
+            \texttt{NOTE, PSEUDOCYL IS A LITTLE DIFFERENT}\\\\
+      	    \path{/home/bjnieman/source/vnmr/cyltable_gen.py --nf 64 --etl 8 --cylindrical --pseudocyl_pe2 --individ_table_limit 5120 --k0echo 3 --clobber 272 272 LSN_E3_pseudocyl_etl8_272}\\\\
       	    \texttt{Also, note that nf and the table axis (272) must be divisible by etl. These tables all have a resolution of 75 um.}\\\\
       	    \texttt{Let me know if you need anything else.}\\\\
       	\texttt{Leigh}\\\\
@@ -399,7 +415,7 @@ breaklines=true
 
 
 % Section V
-\section{Return to CS with sparseMRI\_v0.2}
+\section{Return to CS with sparseMRI\_v0.2 (05.01.15 - 06.03.15)}
 
   \subsection{What happened?}
 
@@ -627,9 +643,13 @@ breaklines=true
             Once we get through the while loop via $\alpha$ and $\beta$ we update our data ($x$) and our gradients ($g_0$) and go through the calculations again with new starting criteria unless the $\ell_2$ of the gradient is less than $\epsilon$, or we've reached our iteration limit.
 
 % Section VI
-\section{Editing Lustig's Code}
+\section{Editing Lustig's Code (05.01.15 - 06.03.15)}
 
   For all of this work, the code has been moved to \texttt{CompressedSensing} -- anything from the aforementioned \texttt{CompressedSensing} folder has been moved to \texttt{MincMatlab} for a better naming scheme.  A ``safe version" of the code can be found in \texttt{Lustig/sparseMRI\_v0.2}.
+
+  For all of this code, the expectation is that from the data, we will have it separated by slice in the readout direction and then stacked by direction. So in a (preferably \texttt{.mat}) file, we would have one brain, one readout slice, all directions. Note that (for obvious reasons), the order of the directions should be the same as in the Gradient Vector file.
+
+  Currently using \texttt{for} loops, which is relatively slow -- but will work to check brute force calculations for right now. I'll be doing this a la John Camarack, and optimizing later -- \texttt{mtimesx} may be a good place to look for optimization routines...
   
   \subsection{Meeting With Brian (05/06/15)}
     Brian has some ideas for what needs to be changed. It can be looked at as a few points.
@@ -651,17 +671,6 @@ breaklines=true
       \item Make this work for multiple directions -- i.e. adapt the code to work in 3D
       \end{itemize}
 
-  \subsection{Weighting Function}
-    We want the code to be able to work on all 30 directions simultaneously and have them be weighted according to how similar the gradient directions are. In order to make sure that this is absolutely viable, some minor edits had to be made to the \texttt{GradientVector.txt} file in order to make the magnitude of each vector as close to 1 as we can get them (currently, they are correct to $1 \pm 0.004$). 
-
-    The weighting function that we are planning on using has the form:
-    \[ \alpha = 
-    \me^
-    {-\frac{(\vec{d_i}\cdot\vec{d_j})^2 - 1}{2\sigma^2}} \]
-
-    A code for this is written, it is called \texttt{dotThresh.m}. It can be found in \texttt{./diffusion}. 
-
-    
 
   \subsection{Phase Correction}
     As per Brian, the way to calculate the phase would be to take the image (as it is real and imaginary) and do:
@@ -673,6 +682,120 @@ breaklines=true
     When I run the calculation using the above equation, it looks \emph{nothing} like what Lustig gets through his method. So, I want to talk this through with Brian, and see exactly what the best method here -- is what I'm doing correct?! Calculations for the phase can either be done Brian's or Lustig's way -- and can be found in \texttt{phCalc.m}. Currently, the code will do the phase calculation either way, based on \texttt{rl}, a parameter that is fed into it. 
 
     I ran a quick check, testing the phase for different slices, and determined that (with the exception of the areas of zero-padding) the phases are different. 
+
+    Via a quick reality check, I made a file \texttt{brain.6.01.mat} that is zero-padded, but only the first direction (as opposed to all directions in \texttt{brain6.mat}).
+
+  \subsection{Weighting Function}
+    We want the code to be able to work on all 30 directions simultaneously and have them be weighted according to how similar the gradient directions are. In order to make sure that this is absolutely viable, some minor edits had to be made to the \texttt{GradientVector.txt} file in order to make the magnitude of each vector as close to 1 as we can get them (currently, they are correct to $1 \pm 0.004$). 
+
+    The weighting function that we are planning on using has the form:
+    \[ \alpha = 
+    \me^
+    {-\frac{(\vec{d_i}\cdot\vec{d_j})^2 - 1}{2\sigma^2}} \]
+
+    A code for this is written, it is called \texttt{dotThresh.m}. It can be found in \texttt{./diffusion}. 
+
+
+  \subsection{Diffusion Direction based ``Gradient" -- Directional Redundancy}
+    Here is where we look at the actual directional redundancy that we get when using the many different (and similar) directions. 
+
+    All of the gradient codes were edited to work with all 30 (or however amount) of directions that we have. Again, the expectation is that the brains are split into a different file for each slice about the readout, and each stacked image is a different direction. 
+
+  \subsection{Problems}
+    Noticed that when running the objective function, my error is astronomical ($\sim 10^{13}$), so I decided to do a check with Lustig's and his is MUCH lower. So I'm doing some reality checking with the first direction. Essentially, I ran the Lustig's \emph{vanilla} code with this slice, and am comparing it to the results of my altered version.
+
+    When running the two, the FT's are identical, as are the XFM's (as they are well defined). The error, I believe, must come from the TV... 
+
+    Nope. In fact, the major difference is occurring with the directional weighting (duh!) because it is actually comparable in size to gradObj, ($\sim 10^2 - 10^3$), while the other two are much smaller ($\sim 10^{-2} - 10^{-1}$).
+
+    Turns out I made a stupid mistake and was dividing by the PDF in the \texttt{res} calculation! Edited this, and now all is well! Need to be more careful.
+
+    What I've noticed is that the directional differences are significantly more varied than the others. We have differences varying from $10^{-33}$ to $10^{22}$. Could this be due to very different images, or possibly due to relatively different dot products (i.e. $\vec{d_i}\cdot\vec{d_j} \approx 0.25$), but the weighting isn't dropping fast enough. 
+
+    The code is SLOW. When I run a 2D test in comparison to the original, it takes about 2 seconds longer. The 3D version takes very long. I'm testing it in comparison to looping the 2D case. 
+
+%section VII
+\section{Continuation of Editing -- Post-Vacation (06.10.15 - Current)}
+  
+  Took a vacation and have been slacking with regards to entering my notes in here. As a quick update as to what's going on, I have the following:
+
+  The code is up and running -- right now we are doing some parameter optimization with respect to $\lambda_{1,2,3}$. This took much longer than anticipated because of some errors that I made with respect to the data. The data wasn't FFT'd properly, causing there to be a ``chequerboard"pattern on it -- that is, all high frequency information. This was causing the sparsity constraint to fail miserably, as all of the information after the wavelet was in the bottom right corner, instead of the top left (this is because the wavelets are actually only working on the real part of the data). 
+
+  As of now, everything is looking a bit better, however, there still does seem to be this soft roll in the data... Could this possibly be due to a misplacing of ``zero" in the transition from \texttt{vrecon} to \textsc{Matlab}?
+
+  \subsection{Comparison to Fully Sampled}
+    For this section, the comparison that was done was between the data that comes out of the algorithm, and the original fully sampled data. It is noted that both sets of data have individual voxel values on the order of $10^4$. The overall RMS difference that we get between the datasets (for a $256 \times 256$ dataset) is also on the order of $10^3 - 10^4$.
+
+    What I've found (which as of right now needs to be confirmed), is that there are sections that are slightly better than others -- though not by much. These sections come up in sort of ``waves" within the parameter optimization map. Below is an optimization map, done using a logarithmic map for \texttt{xfmWeights} and \texttt{TVWeights}. We can see that is seems like there are jump discontinuities, but these are not as big as they seem in \autoref{fig:lamOpt}. The dynamic range of the colour axis only spans a value of less than 200, for an RMS average of about $8 \times 10^3$, or about $10^{-1}$ for each voxel! In \autoref{fig:lamOptHigh}, we can see a similar plot, but the XFM and TV values are much higher.This leads to a slight increase in the RMS, but the XFM and TV differences in the objective function are comparable to the OBJ (the $\ell_2$ norm) of the data consistency term. This is what we're looking to get, as it's what is seen in the Shepp-Logan example.
+
+    \begin{figure}[!ht] 
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {0mm 0mm 0mm 0mm},clip,scale = 0.4] {Figs/CS_Code/ParamOptimization.eps}
+      \caption{Parameter optimization using an RMS difference. These values are computed using TV and XFM $\in [10^{-3},1]$. Classified as the ``low" parameter values. }
+      \label{fig:lamOpt}
+      \end{figure}
+
+    \begin{figure}[!ht] 
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {0mm 0mm 0mm 0mm},clip,scale = 0.4] {Figs/CS_Code/ParamOptimization-HighTVxfm.eps}
+      \caption{Parameter optimization using an RMS difference. These values are computed using TV and XFM $\in [1,10^{4}]$. Classified as the ``high" parameter values.}
+      \label{fig:lamOptHigh}
+      \end{figure}
+
+  \subsection{What next?}
+    After looking at all of the figures, what I've found is that they don't seem to be very different from each other if we look at the magnitude of the images. It is noted that they do look pretty nice, and in my eyes better than the merely undersampled case. I want to analyse a few things after looking at these images:
+    
+    \begin{itemize}
+      \item Can we even more grossly undersample in order to see weirder effects?
+      
+      \item How different are the images actually? Is one of the parameters better to change for differences? Were the values that I chose to work with too close together (i.e. it was taking $\lambda_{1,2} \approx 0$)?
+
+      \item What exactly is the distribution of the noise? We've added in incoherence noise, and removed some noise via denoising steps in the algorithm.
+
+      \end{itemize}
+    \subsubsection{Parameter Weighting}
+      Something that I noticed when running the same analysis on the Shepp-Logan phantom was that the XFM and TV weightings are actually close to the objective weighting, $\pm$ an order of magnitude. This is integral information to have, because of how it compares to the case of our data, where it is many orders of magnitude lower. Perhaps we are not using the right orders of values for our analysis -- this may be why we see such minuscule differences when we change our parameters.
+
+      The data for each section can be found easily. The low parameter data can be found at \path{/projects/muisjes/asalerno/CS/data/LowTV-XFM.mat}, and the high data can be found at \path{/projects/muisjes/asalerno/CS/data/HighTV-XFM.mat}. Each of these is a 4D file, where the 3$^{\text{rd}}$ dimension is TV and the 4$^{\text{th}}$ dimension is XFM weights. In each dataset, the xfmWeights and TVWeights variables can be found. This is useful if you are using something like \texttt{logim.m} to plot. \\
+
+  \subsubsection{Meeting Notes -- 06/24/15}
+    During my meeting, Brian suggested that I change how the images are input into the algorithm. The benefit of this is that ``no matter what we feed into the code, the parameters should still be the same". 
+
+    Brian also wants me to normalize the data so that either the images' maxima are set to be 1, or that  $(k_x,k_y) = (0,0)$ has a value of 1. This also means that $\bar{\text{im}} = 1$. 
+
+    Eventually, Brian wants to fix this value so that we don't have this drop in intensity when applying CS to diffusion data. An idea is to either: 
+
+    \begin{itemize}
+      \item Add in another term of the form $(F_o - \int{f(x)\diff x)^2}$ where $f(x)$ is the image, and $F_o$ is the original average.
+      \item Possibly tack on a weighting term: $||w (\mathcal{F}_u\{f(x)\} - y)||_2$
+      \end{itemize}
+
+    Later on, an idea may be to work in $k$-space! Problem with this, however, is that we would have to properly apply $\mathcal{F}{\nabla f(x)}$. Again, here, $f(x)$ is the image. 
+
+    Lastly, with respect to the noise analysis (talked about later, in Section 7.3) I was able to show that the noise looked Rayleigh (and thus likely Rician). However, Brian said to look into this more by analyzing the $\mathds{R}$ and $\mathds{I}$ parts individually to check if they're both Gaussian. 
+
+  
+  \subsubsection{Normalization -- 06/29/15}
+
+    I did a quick test of this, and it seems like by doing this, we can get the more realistic (and noted in literature) values of $\lambda_{1,2} \leq 1$. However, we still hit a pretty big issue, \emph{the DC component seems to push for the very low values of $\lambda_{1,2}$, even though visually, they're not necessarily the best.} For this, Brian suggested to look at the zero-point of $k$-space. This may be a good idea regardless, as it seems like there may be a light roll off where there shouldn't be in the raw image data -- it can be seen in the real part of the data. 
+
+    As of 06/29/15, this has been fixed, however the original data has been put in \path{/projects/muisjes/asalerno/CS/data/raw_test_data/data}. The issue that existed was that for a 256 $\times$ 256 dataset, the $(k_x,k_y) = (0,0)$ was not in the proper location. 
+
+    It seems like the data is now well normalized and there actually isn't a drop in the mean of the data after applying the CS routine. The \emph{max} seems to drop, but the mean actually increases by a fraction of a percent. The code \path{/home/asalerno/Documents/CompressedSensing/demo_TVxfm.m} has been edited in order to include the ability to normalize either by max or mean. 
+
+
+  \subsection{Noise Analysis}
+    By taking a small subset of the image where the noise exists, I ran a simple noise analysis on the data. The noise analysis that was done is akin to the one done in MBP 1024 for the MRI lab. In fact, it uses a slightly modified version of that code. 
+
+    When this analysis was done, it appears as if the noise is Rayleigh distributed \emph{after} the Compressed Sensing algorithm, regardless of the parameter choice (under $\lambda_{1,2} \in [10^{-3},1]$ -- the same analysis is to be done for $\lambda_{1,2} \in [1, 10^4]$. To test this, I ran the analysis on each image coming out of the parameter optimization algorithm. The noise distributions were fit to a Lorentzian, Gaussian, and Rayleigh function, with the highest value of an adjusted R$^2$ value taken to be the ``best fit".
+
+    Doing the same analysis for the data before the compressed sensing algorithm, we find that, again, we exist in a low SNR regime of MRI where the data fits nicely to a Rayleigh function. Thus, I believe it is OK to utilize our normal statistics on the data. 
 
 
 
