@@ -10,6 +10,11 @@
 \usepackage{hyperref}
 \usepackage{dsfont}
 \usepackage{url}
+\usepackage{ifplatform}
+\ifwindows
+	\usepackage{graphicx}
+	\usepackage{epstopdf}
+\fi
 \hypersetup{
     colorlinks,
     citecolor = black,
@@ -82,7 +87,7 @@ breaklines=true
 
 \newpage
 
-% Section O
+% Section 0
 \section{Questions for Brian}
   Here, I will include questions that I asked Brian based on the date of the meeting -- I'll also include a basic description of the topic within the subtopics for each set of questions and whatnot.
 
@@ -820,7 +825,18 @@ breaklines=true
 
     Apparently, FTXFMtx looks quite a lot like a brain (as it should as it's apparently just the $k$-space image of the brain)... This could be where we're getting the utter craziness. Is this what is building our first guess? Perhaps our first guess is a very smoothed out version of the data that we have. 
 
+    As of 06/30/15, we've figured out that the issue actually arises from what exactly is being taken as \texttt{im\_res} and \texttt{data}. Because of this, we have many different angles that we have to look at.
+
+
+  \subsection{Analysis of the code -- What's our starting point? -- 07/02/15 - }
+
+    \bo{07/02/15}\\
+
+    Looked at the code and found how similar the data looks right from the get go -- the basis that we are using is \texttt{data}, even though the data that we are feeding into it is \texttt{im\_dc}, which is density compensated. Thus, after the first iteration, it's being pushed towards the non-density-compensated case. Thus, even when $\lambda_1 = \lambda_2 = 0$, we get this nicely smoothed image. \\
+
+    \bo{07/03/15}
     
+    Looking into this a little more, I want to see exactly when the data tanks towards the \texttt{data} variable, i.e. when there is no density compensation. 
     
 
 \end{document}
