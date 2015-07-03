@@ -781,13 +781,17 @@ breaklines=true
     Lastly, with respect to the noise analysis (talked about later, in Section 7.3) I was able to show that the noise looked Rayleigh (and thus likely Rician). However, Brian said to look into this more by analyzing the $\mathds{R}$ and $\mathds{I}$ parts individually to check if they're both Gaussian. 
 
   
-  \subsubsection{Normalization -- 06/29/15}
+  \subsubsection{Normalization -- 06/29/15 - 06/30/15}
 
     I did a quick test of this, and it seems like by doing this, we can get the more realistic (and noted in literature) values of $\lambda_{1,2} \leq 1$. However, we still hit a pretty big issue, \emph{the DC component seems to push for the very low values of $\lambda_{1,2}$, even though visually, they're not necessarily the best.} For this, Brian suggested to look at the zero-point of $k$-space. This may be a good idea regardless, as it seems like there may be a light roll off where there shouldn't be in the raw image data -- it can be seen in the real part of the data. 
 
     As of 06/29/15, this has been fixed, however the original data has been put in \path{/projects/muisjes/asalerno/CS/data/raw_test_data/data}. The issue that existed was that for a 256 $\times$ 256 dataset, the $(k_x,k_y) = (0,0)$ was not in the proper location. 
 
-    It seems like the data is now well normalized and there actually isn't a drop in the mean of the data after applying the CS routine. The \emph{max} seems to drop, but the mean actually increases by a fraction of a percent. The code \path{/home/asalerno/Documents/CompressedSensing/demo_TVxfm.m} has been edited in order to include the ability to normalize either by max or mean. 
+    It seems like the data is now well normalized and there actually isn't a drop in the mean of the data after applying the CS routine. The \emph{max} seems to drop, but the mean actually increases by a fraction of a percent. The code \path{/home/asalerno/Documents/CompressedSensing/demo_TVxfm.m} has been edited in order to include the ability to normalize either by max or mean. \\
+
+    \bo{06/30/15}\\\\
+
+    Something interesting that I noted was that the first iteration performs the most ``clean up" of the data. If one were to run the code, looking at the data after each loop, I'd expect that they'd see a major jump after the first run, then the differences to taper off exponentially after that -- like a power function. 
 
 
   \subsection{Noise Analysis}
@@ -797,6 +801,26 @@ breaklines=true
 
     Doing the same analysis for the data before the compressed sensing algorithm, we find that, again, we exist in a low SNR regime of MRI where the data fits nicely to a Rayleigh function. Thus, I believe it is OK to utilize our normal statistics on the data. 
 
+  \subsection{Overly Smoothed Results with $\lambda_1 = \lambda_2 = 0$ -- 06/30/15}
 
+    \begin{figure}[!ht] 
+      \centering
+      \vspace{0pt}
+      \setlength\fboxsep{0pt}
+      \setlength\fboxrule{0.5pt}
+      \includegraphics[trim = {0mm 0mm 0mm 0mm},clip,scale = 0.4] {Figs/CS_Code/overSmooth.eps}
+      \caption{Overly smoothed result. Comparisons of when there is no compressed sensing, to when $\lambda_1 = \lambda_2 = 0$, and again to $\lambda_1,\lambda_2 \neq 0$}
+      \label{fig:overSmooth}
+      \end{figure}
+
+    Some weird results are occurring when $\lambda_1 = \lambda_2 = 0$. Essentially, we'd expect that we end up with something that is very close to the original dataset, as can be seen in the figure above. However, this isn't the case -- we are obtaining an overly smoothed result that looks almost nothing like the original \texttt{im\_dc}
+    variable as we would expect. The question here is why. 
+
+    Looked into whether it was the XFM that was causing it. Upon some quick inspection, I can safely say it wasn't. On the first iteration, when it goes through the line $x = x + t*\diff x$, the major difference comes. Somewhere in this line is a major change that occurs. The question, however, is exactly what is happening... 
+
+    Apparently, FTXFMtx looks quite a lot like a brain (as it should as it's apparently just the $k$-space image of the brain)... This could be where we're getting the utter craziness. Is this what is building our first guess? Perhaps our first guess is a very smoothed out version of the data that we have. 
+
+    
+    
 
 \end{document}
