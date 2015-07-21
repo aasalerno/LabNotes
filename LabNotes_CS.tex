@@ -720,7 +720,7 @@ breaklines=true
     The code is SLOW. When I run a 2D test in comparison to the original, it takes about 2 seconds longer. The 3D version takes very long. I'm testing it in comparison to looping the 2D case. 
 
 %section VII
-\section{Continuation of Editing -- Post-Vacation (06.10.15 - Current)}
+\section{Continuation of Editing -- Post-Vacation (06.10.15 - 07.17.15)}
   
   Took a vacation and have been slacking with regards to entering my notes in here. As a quick update as to what's going on, I have the following:
 
@@ -828,7 +828,7 @@ breaklines=true
     As of 06/30/15, we've figured out that the issue actually arises from what exactly is being taken as \texttt{im\_res} and \texttt{data}. Because of this, we have many different angles that we have to look at.
 
 
-  \subsection{Analysis of the code -- What's our starting point? -- 07/02/15 - }
+  \subsection{Analysis of the code -- What's our starting point? -- 07/02/15 - 07/17/15 }
 
     \bo{07/02/15}\\
 
@@ -837,6 +837,17 @@ breaklines=true
     \bo{07/03/15}
     
     Looking into this a little more, I want to see exactly when the data tanks towards the \texttt{data} variable, i.e. when there is no density compensation. 
-    
+  
+
+% Section VIII
+\section{Adding in the Directional Component -- 07/17/15 - current}
+  
+  \subsection{Directionally specific sampling -- 07/20/15}
+    After going through the code and figuring some stuff out about $\lambda_1 \& \lambda_2$, we thought it would be a good idea to continue on and go with the directional component of the undersampling.
+
+    \subsubsection{Directional Undersampling with a Cause}
+      This part of the project was a bit more difficult than I had first thought it would be. The problem presented itself as the fact that we have 30 directions and we want to undersample in such a way that over some small solid angle we can have a fully sampled brain. 
+
+      In order to do this, I had to start with the system of looking at the minimum energy in an electrostatics point of view. There are ways to do this with a continuum of directions (talk to Jan about the applet). However, for the fact that we have our 30 directions, we can't use this system. So I went through all $_{30}C_k$ combinations (where $k = \lfloor 30 p \rfloor$)
 
 \end{document}
