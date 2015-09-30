@@ -115,7 +115,7 @@ breaklines=true
     \begin{itemize}
       \item Pick one slice - extract slice from dataset with FT on RO (i.e. in dim space) and no FT on PE1 and PE2 (aka PE and SL)
       \item Isotropic undersampling (I think this is a bad idea)
-      \item Recon slices independently with Lustig code (using $\lambda_2 psi[m] + \lambda_1 TV[m]$)
+      \item Recon slices independently with Lustig code (using $\lambda_2 Psi[m] + \lambda_1 TV[m]$)
       \item Add a directional similarity term to the recon (so we can recon similar slices simultaneously) ($\lambda_3 ||m_j - m_k||_2 f(\vec{d_j} \cdot \vec{d_k}))$
       \item However, the form of $f((\vec{d_j}\cdot \vec{d_k}))$ is still unknown
       \end{itemize}
@@ -478,12 +478,13 @@ breaklines=true
              \hline
              \textbf{Represents}                     & \textbf{Code}          & \textbf{Math Mode}          \\  \hline \hline
              \textbf{Raw Data} ($k$-space)           & \texttt{params.data}   & $y$                         \\  \hline
-             \textbf{Iterative Data (sparse)}        & \texttt{x}             & $x$ or $m$                  \\  \hline
+             \textbf{Image} (image-space)            & \texttt{XFM'*x}        & $m$                         \\  \hline
+             \textbf{Iterative Data (sparse)}        & \texttt{x}             & $\Psi x$ or $\Psi m$                  \\  \hline
              \textbf{Fourier Transform}              & \texttt{params.FT}     & $\mathcal{F}_u[\cdot]$      \\  \hline
-             \textbf{Sparsifying Transform}          & \texttt{params.XFM}    & $\phi[\cdot]$               \\  \hline
+             \textbf{Sparsifying Transform}          & \texttt{params.XFM}    & $\Psi[\cdot]$               \\  \hline
              \textbf{Inverse Fourier Transform}      & \texttt{params.FT'}    & $\mathcal{F}_u^{-1}[\cdot]$ \\  \hline
-             \textbf{Inverse Sparsifying Transform}  & \texttt{params.XFM'}   & $\phi^{-1}[\cdot]$          \\  \hline
-             \textbf{Gradient of the data}           & \texttt{dx}            & $\nabla m$          \\  \hline
+             \textbf{Inverse Sparsifying Transform}  & \texttt{params.XFM'}   & $\Psi^{-1}[\cdot]$          \\  \hline
+             \textbf{Gradient of the data}           & \texttt{dx}            & $\nabla \Psi m$          \\  \hline
             \end{tabular}
             \caption{Table of conversions between math mode and code.}
             \label{tab:conv}
@@ -495,7 +496,7 @@ breaklines=true
 
         \subparagraph{Compute the gradient of the sparse data}
 
-         The equation that we're editing is: $g_0 = \nabla\phi(x)$
+         The equation that we're editing is: $g_0 = \nabla\Psi(x)$
          This calculates the gradient of the \emph{sparse} dataset. It uses \texttt{wGradient.m}, which relies on calculation of the objective functions (which still needs to be discussed). \\\\
 
           \bo{\texttt{gOBJ.m} - Gradient of the Objective Function}
@@ -581,10 +582,10 @@ breaklines=true
 
             Overall, however, this equation has a similar form to the one before it, but requires a few transforms in order to be put back into the sparse space.
 
-            \noindent Let $D_x = TV[\phi^{-1}[x]]$: 
-            \[ \nabla f = \phi[TV^{-1}[p D_x (|D_x|^2 + \alpha_1)^{\frac{p}{2} - 1}]]\]
+            \noindent Let $D_x = TV[\Psi^{-1}[x]]$: 
+            \[ \nabla f = \Psi[TV^{-1}[p D_x (|D_x|^2 + \alpha_1)^{\frac{p}{2} - 1}]]\]
 
-            The terms inside of $\phi[TV^{-1}[\dotsm]]$ are analogous to the terms in the above section. Again, we utilized $|D_x|^2 = D_x D_x^*$. In this case, however, it is noted that the data doesn't follow the same ``1" value as the \texttt{gXFM} did, even though the terms inside the transforms are all 1. My guess is that the noise of this distribution (which will happen in normal DAQ) will cause this value to increase dramatically (which is logical because variation will occur due to noise from voxel to voxel -- if it didn't, the assumption of Gaussian or Rician noise would be incorrect).\\
+            The terms inside of $\Psi[TV^{-1}[\dotsm]]$ are analogous to the terms in the above section. Again, we utilized $|D_x|^2 = D_x D_x^*$. In this case, however, it is noted that the data doesn't follow the same ``1" value as the \texttt{gXFM} did, even though the terms inside the transforms are all 1. My guess is that the noise of this distribution (which will happen in normal DAQ) will cause this value to increase dramatically (which is logical because variation will occur due to noise from voxel to voxel -- if it didn't, the assumption of Gaussian or Rician noise would be incorrect).\\
 
         \subparagraph{Compute the preobjective and objective}
           The preobjective (and objective) functions are calculated early in order to ``make it cheap to compute many times for efficient line-search". Some of these values are calculated many times and often, so this would be a good place to attack when we are looking at optimization.
@@ -596,10 +597,10 @@ breaklines=true
 
             The nomenclature is long, annoying, tedious, but all in all, understandable. The key is to look for each set of transforms. From this code, the outputs that we get are:
             \begin{itemize}
-              \item \texttt{FTXFMtx} - $k$-space of $x$ ($\mathcal{F}_u[\phi^{-1}[x]]$) 
-              \item \texttt{FTXFMtdx} - $k$-space of $\diff x$ ($\mathcal{F}_u[\phi^{-1}[\diff x]]$)
-              \item \texttt{DXFMtx} - TV of the image space of $x$ ($TV[\phi^{-1}[x]]$) 
-              \item \texttt{DXFMtdx} - TV of the image space of $\diff x$  ($TV\phi^{-1}[\diff x]]$)
+              \item \texttt{FTXFMtx} - $k$-space of $x$ ($\mathcal{F}_u[\Psi^{-1}[x]]$) 
+              \item \texttt{FTXFMtdx} - $k$-space of $\diff x$ ($\mathcal{F}_u[\Psi^{-1}[\diff x]]$)
+              \item \texttt{DXFMtx} - TV of the image space of $x$ ($TV[\Psi^{-1}[x]]$) 
+              \item \texttt{DXFMtdx} - TV of the image space of $\diff x$  ($TV\Psi^{-1}[\diff x]]$)
               \end{itemize}
 
           \bo{\texttt{objective.m} - Calculates the Objective Function}
@@ -610,7 +611,7 @@ breaklines=true
             \verb!  obj = FTXFMtx + t*FTXFMtdx - params.data;!\\
 
             \noindent In mathematical terms, we have:
-            \[ Obj = \sum\limits_{i=1}^N \left(\mathcal{F}_u[\phi^{-1}[x]]_i + t\mathcal{F}_u[\phi^{-1}[\diff x]]_i - y_i\right)^2 \]
+            \[ Obj = \sum\limits_{i=1}^N \left(\mathcal{F}_u[\Psi^{-1}[x]]_i + t\mathcal{F}_u[\Psi^{-1}[\diff x]]_i - y_i\right)^2 \]
 
             Where $y$ is the original data that we started with (off the scanner). We let $i$ represent the $i^{\text{th}}$ voxel of the data, since the objective value that we obtain is to be a measure of our loss. To put it into perspective, we are figuring out what the $\ell_2^2$ in $k$-space between the data, plus it's gradient, from the original data off the scanner. For all conversions, remember to see \autoref{tab:conv}.
 
@@ -682,7 +683,7 @@ breaklines=true
 
     \[ P = \frac{s^*}{|s|} \]
 
-    Where $s$ represents the signal of the image. This is akin to multiplying by $\me^{-\phi(s)}$.
+    Where $s$ represents the signal of the image. This is akin to multiplying by $\me^{-\Psi(s)}$.
 
     When I run the calculation using the above equation, it looks \emph{nothing} like what Lustig gets through his method. So, I want to talk this through with Brian, and see exactly what the best method here -- is what I'm doing correct?! Calculations for the phase can either be done Brian's or Lustig's way -- and can be found in \texttt{phCalc.m}. Currently, the code will do the phase calculation either way, based on \texttt{rl}, a parameter that is fed into it. 
 
@@ -840,7 +841,7 @@ breaklines=true
   
 
 % Section VIII
-\section{Adding in the Directional Component -- 07/17/15 - current}
+\section{Adding in the Directional Component -- 07/17/15 - 08/20/15}
   
   \subsection{Directionally specific sampling -- 07/20/15}
     After going through the code and figuring some stuff out about $\lambda_1 \& \lambda_2$, we thought it would be a good idea to continue on and go with the directional component of the undersampling.
@@ -849,5 +850,41 @@ breaklines=true
       This part of the project was a bit more difficult than I had first thought it would be. The problem presented itself as the fact that we have 30 directions and we want to undersample in such a way that over some small solid angle we can have a fully sampled brain. 
 
       In order to do this, I had to start with the system of looking at the minimum energy in an electrostatics point of view. There are ways to do this with a continuum of directions (talk to Jan about the applet). However, for the fact that we have our 30 directions, we can't use this system. So I went through all $_{30}C_k$ combinations (where $k = \lfloor 30 p \rfloor$)
+      
+      Using this method of undersampling, I was able to get a good rendition of the original fully sampled dataspace. \emph{However, this MUST BE TAKEN WITH A GRAIN OF SALT}. The reason for this is that we are looking for minute differences in data, so, how much better does adding directions that are very similar do in comparison to adding in directions that are very different. I will do an analysis on this in another section.
+
+
+% Section IX
+\section{Committee Meeting Notes -- What is my future plan?}
+
+  In my committee meeting, I was told a few things. Some good, some that I need to take a deeper look at. Primarily, the notion is that I will be able to finish within a reasonable amount of time -- and I plan to do so. 
+
+  Given what I showed the group, specifically pertaining to a two-fold approach with respect to direction -- namely using it as an extra term in the equation as well as a specific method of undersampling -- there were some notes that were made:
+
+  \begin{enumerate}
+    \item Consider a sparsity transform in angular space -- an idea for this could be a ridgelet transform.
+
+    \item Link total variation in space and angle -- this will make the ``extra term" that we tack on more mathematically believable
+
+    \item Investigate using angular term \emph{alone} in recon -- this will help me figure out exactly what this term is doing in the reconstruction method
+
+    \item Test higher compression factors -- how far can we push this before it breaks down?
+
+    \item Verify convergence across multiple starting conditions -- Does the starting point matter in how this will work? If so, we need to take a step back and look at the code closely
+
+    \item Improve metric for evaluating results -- this is very important, as right now, all we use is an RMS, which may not be super accurate.
+    \end{enumerate}
+  
+  In addition to these notes, I \emph{really} need to be better at knowledge of neuroanatomy, clinical applications of DTI, other imaging/neuroscience research methods.
+
+
+% Section X
+\section{Post Committee Meeting Work}
+
+  \subsection{Analysis of the Angular Term in the Reconstruction}
+    Specifically, the term that I'm talking about here is the extra term that we tacked on. The equation is $w_{i,j} \sum\limits_{\substack{i,j = 1 \\ i \neq j}}^n  \me^{{-\frac{(\vec{d_i}\cdot\vec{d_j})^2 - 1}{2\sigma^2}}}$ Chris Macgowan suggested that I go through and see exactly what the extra term does \emph{on it's own}. It's noted that this will take a while because of how the recon is done.
+
+    There are a few parameters that we have control over.
+
 
 \end{document}
