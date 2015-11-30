@@ -755,7 +755,7 @@ breaklines=true
       \end{figure}
 
   \subsection{What next?}
-    After looking at all of the figures, what I've found is that they don't seem to be very different from each other if we look at the magnitude of the images. It is noted that they do look pretty nice, and in my eyes better than the merely undersampled case. I want to analyse a few things after looking at these images:
+    After looking at all of the figures, what I've found is that they don't seem to be very different from each other if we look at the magnitude of the images. It is noted that they do look pretty nice, and in my eyes better than the merely undersampled case. I want to analyze a few things after looking at these images:
     
     \begin{itemize}
       \item Can we even more grossly undersample in order to see weirder effects?
@@ -879,12 +879,87 @@ breaklines=true
 
 
 % Section X
-\section{Post Committee Meeting Work}
+\section{Post Committee Meeting Plans}
 
   \subsection{Analysis of the Angular Term in the Reconstruction}
     Specifically, the term that I'm talking about here is the extra term that we tacked on. The equation is $w_{i,j} \sum\limits_{\substack{i,j = 1 \\ i \neq j}}^n  \me^{{-\frac{(\vec{d_i}\cdot\vec{d_j})^2 - 1}{2\sigma^2}}}$ Chris Macgowan suggested that I go through and see exactly what the extra term does \emph{on it's own}. It's noted that this will take a while because of how the recon is done.
 
-    There are a few parameters that we have control over.
+    There are a few parameters that we have control over. Specifically, we have control over $\sigma$, which means that we can change the width and how far down the values will go for the weighting function.
 
+    We have a major problem, though, as the code is having the ridiculous effect of pushing the data too close to our original data from the scanner, making our good starting point useless. There has to be a way to get this to work better, as using this added $k$-space starting point with $y$ data only being that which we got off the scanner. The problem is that we lose the details that we got from doing the addition. 
+
+    \subsubsection{Changing the Weighting Function}
+
+      Some preliminary tests were done to look at the effect of having a function that looked like $\sin^2 \theta$ as opposed to $(|\cos \theta | - 1)^2$ in the exponent. The differences are subtle, but having a more continuous function should lead to better and more trustworthy results. Final note is that we will now be using the $\sin^2 \theta$ form of the term.
+
+  \subsection{TV in Direction Space Implementation}
+
+    During my committee meeting, Dr. John Sled suggested that I put my angular term and the total variation terms together in the code, as the directional term is just a variation on the total variation term. Instead of working in image space to find a variation, here we're working in diffusion direction space.
+
+    One notion on how to do this is to have a function that will calculate the planar fits for each dataset combination. This would then be used in the calculation for the extra term. It is noted that the weighting function that is noted above and this method are two separate methods of doing the computations. 
+
+    In this method, I need to code in the directional component into the TV code. 
+
+% Section XI 
+\section{TV in Direction Space Implementation}
+  This idea wasn't as trivial as it may seem. There are a few things that need to be considered while doing something along these lines. Namely, those are:
+
+    \begin{itemize}
+      \item What effect is the term having on it's own?\\
+      \item How are we to compare the TV made by the pixel gradient (i.e. the high pass filter) to the TV made by the directional component? Will this change from slice to slice, or dataset to dataset?\\
+      \item What does this term end up meaning to the rest of them -- will this downplay anything or cause others to have a seemingly greater effect? (i.e. Will the XFM term appear to be greater?)\\
+      \item How does the timing in this method compare to the method of using a term on it's own?\\
+      \item What effect will using different fits have (i.e. linear vs parabolic vs ellipsoid)? On that note, how large of an angle are we willing to accept in the analysis?\\
+      \item If this method does work, what is the best way to use our time? Would it be best to go in circles saying that we can get better results if we do more directions, because then we can use better fits, which allows us to use more directions -- etcetera.
+      \end{itemize}
+
+  Looking at each one of these in detail should help me figure out exactly what the best course of action will be. I'll also note that most of this work will be done using some matrix math, which I will explain in this document -- it is a tad tedious, however it will be worth it in the end. The matrix math comes from utilizing a least squares approach to the calculations. 
+
+  \subsection{Theory}
+
+    Here we will look at the mathematics to prove that what we are doing makes sense. 
+
+  \subsection{What does each term do on their own?}
+
+    \subsubsection{No terms on}
+
+      As a reality check, Brian suggested that I see what happens if none of the terms are on. Using a im\_dc comprised of the ``check if this point exists" dataset (goes through each point in $k$-space for each direction, if the point exists in the diffusion direction we want, it doesn't look at others. If not, it looks at the closest one up to the $n^\text{th}$ closest that the user wants). As expected, the dataset that came out was exactly our initial guess as the $\ell_2$ norm was satisfied at zero.
+
+    \subsubsection{XFM -- Wavelet}
+
+      When running some preliminary tests using all of the terms, I noted that the XFM term seemed to be the largest, and was effectively three orders of magnitude larger than the TV term. This made me want to analyze this further to see what's happening -- especially since I hadn't touched this file at all. It is noted in the same breath that the objective was around the same order of magnitude as the XFM, only the TV was lagging well behind. This shouldn't be the case, though, unless the added on term for the direction is actually imposing a negative value on the $G_{diff}$ value. \textbf{It is noted that this is not the case -- checked on 11/29/15}.
+
+      The XFM term is based on a sum where we do $x + t*\diff x$, where $x$ is our image in wavelet space, $t$ is our line-search value (i.e. how far down $\diff x$ we will go), and $\diff x$ is our summed gradient, also in wavelet space. This is precisely how Lustig does it as well, so there is nothing fishy in the code. 
+
+      Running it only with the XFM term takes approximately 235 seconds.
+
+      Using \texttt{XFM = Wavelet('Debauchies',10,4)} seems to produce a weird artifact where there is some sort of hatching occurring in the image, as can be seen in \autoref{fig:Wave104}.  It also appears to be relatively smeared at a weighting of 0.01 -- there is a significant loss of information here. More Wavelet tests are going to be done. 
+
+      \begin{figure}[h] 
+
+        \centering
+        \vspace{0pt}
+        \setlength\fboxsep{0pt}
+        \setlength\fboxrule{0.5pt}
+        \includegraphics[trim = {60mm 100mm 46mm 70mm},clip,scale = 0.4] {Figs/CS_TV-Dir/Wave104.eps}
+        \caption{Artifacts and smearing produced by the Wavelet transform at Debauchies 10, 4.}
+        \label{fig:Wave104}
+
+        \end{figure}
+
+    Apparently, it looks like the issue still occurs with \texttt{XFM = Wavelet(6,4)}. So, trying to up it, and go from there. 
+
+    For some reason, this is happening in all cases. This makes NO SENSE to me. So, to reality check, I want to see what's happening in Lustig's original code if only the XFM term is present. 
+
+    For right now, it looks like the best method is to just omit the XFM term, as I believe it doesn't really add much (the XFM doesn't actually cause too much of a difference).
+
+
+    \subsection{TV -- Pixel Differences Term Only}
+
+      This term, as expected, causes much of the smearing. This is because the TV term is meant to work on any large differences in pixel values that are found.  The problem is that the smearing seems to take over the entire section -- which is odd and needs some more analysis. Thus, I need to look into this more and try to figure out why this is happening, what exactly is the d$x$ that we're looking at for the directional term? Why does it seem to have such a strong effect? It seems to be just killing any and all detail that we have (and this is from the pixels part, not the directional part).
+
+    \subsection{TV -- Directional Term Only}
+
+      As Dr. Chris Macgowan suggested in my last committee meeting, I need to analyze what exactly the directional term is doing on its own. So, in order to do that, I need to set the pixel values in the TV term to zero, but leave the directional term as is. 
 
 \end{document}
