@@ -755,7 +755,7 @@ breaklines=true
       \end{figure}
 
   \subsection{What next?}
-    After looking at all of the figures, what I've found is that they don't seem to be very different from each other if we look at the magnitude of the images. It is noted that they do look pretty nice, and in my eyes better than the merely undersampled case. I want to analyze a few things after looking at these images:
+    After looking at all of the figures, what I've found is that they don't seem to be very different from each other if we look at the magnitude of the images. It is noted that they do look pretty nice, and in my eyes better than the merely undersampled case. I want to analyse a few things after looking at these images:
     
     \begin{itemize}
       \item Can we even more grossly undersample in order to see weirder effects?
@@ -927,7 +927,7 @@ breaklines=true
 
     \subsubsection{XFM -- Wavelet}
 
-      When running some preliminary tests using all of the terms, I noted that the XFM term seemed to be the largest, and was effectively three orders of magnitude larger than the TV term. This made me want to analyze this further to see what's happening -- especially since I hadn't touched this file at all. It is noted in the same breath that the objective was around the same order of magnitude as the XFM, only the TV was lagging well behind. This shouldn't be the case, though, unless the added on term for the direction is actually imposing a negative value on the $G_{diff}$ value. \textbf{It is noted that this is not the case -- checked on 11/29/15}.
+      When running some preliminary tests using all of the terms, I noted that the XFM term seemed to be the largest, and was effectively three orders of magnitude larger than the TV term. This made me want to analyse this further to see what's happening -- especially since I hadn't touched this file at all. It is noted in the same breath that the objective was around the same order of magnitude as the XFM, only the TV was lagging well behind. This shouldn't be the case, though, unless the added on term for the direction is actually imposing a negative value on the $G_{diff}$ value. \textbf{It is noted that this is not the case -- checked on 11/29/15}.
 
       The XFM term is based on a sum where we do $x + t*\diff x$, where $x$ is our image in wavelet space, $t$ is our line-search value (i.e. how far down $\diff x$ we will go), and $\diff x$ is our summed gradient, also in wavelet space. This is precisely how Lustig does it as well, so there is nothing fishy in the code. 
 
@@ -960,6 +960,22 @@ breaklines=true
 
     \subsection{TV -- Directional Term Only}
 
-      As Dr. Chris Macgowan suggested in my last committee meeting, I need to analyze what exactly the directional term is doing on its own. So, in order to do that, I need to set the pixel values in the TV term to zero, but leave the directional term as is. 
+      As Dr. Chris Macgowan suggested in my last committee meeting, I need to analyse what exactly the directional term is doing on its own. So, in order to do that, I need to set the pixel values in the TV term to zero, but leave the directional term as is. 
+
+      Unfortunately, this didn't lead to results as good as we would have hoped. As such, later in the document, there will be a lengthy discussion about exactly what the term does. 
+
+      For now, our analysis will take a step back and analyse the code a little further -- looking at exactly how the code is doing the non-linear conjugate gradient search. We need to see what the cost function is doing -- is it constantly decreasing? 
+
+\section{Analysis of fnlCg.m}
+
+  \subsection{Discussion with Brian}
+
+    After my seminar, Brian and I talked about some different things that we can do to look at what's happening in the code. We need to fully understand the calculations that are being done for the \texttt{while} loop that is being done in the code. 
+
+    There are a few major things that we noted. The first of which is the double looping. There is a loop that actually wraps around \texttt{fnlCg.m}, and it seems like the only purpose of this loop is to reset the \texttt{t0} value to be whatever we want it to be as per the \texttt{param} structure. The second thing we wanted to look at is the exiting function. As it stands, what we have is $f_1 > f_0 - \alpha*t*|g_0*g_0|$, where $f_1$ is the value of the objective function after applying a step-value $t$. $f_0$ represents the objective function when we don't take a step. $\alpha$ is a pre-set value -- by default it is set at 0.01. Finally, $g_0*g_0$ is a pixel by pixel multiplication and sum (i.e. Euclidean sum-of-squares) of $\nabla x$, which is the sum of the conjugate gradients.
+
+      
+
+\section{Post-Seminar ``Future Work" Analysis}
 
 \end{document}
