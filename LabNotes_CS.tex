@@ -976,6 +976,14 @@ breaklines=true
 
       
 
-\section{Post-Seminar ``Future Work" Analysis}
+\section{Post-Comittee Meeting}
+  
+  \subsection{Working on Python Code}
+
+    The idea here is that we will work on a sort of port of Lustig's MATLAB code. It's not a direct port as we will be using the NumPy optimization algorithms, as opposed to a hard coded CG system. In saying that, however, it is likely that we will be using NumPy's CG algorithm to start.
+
+    In addition, we believe that Lustig has not been handling the derivatives of the functions very well, and therefore need to test this further to see what we would get in comparison to him. Lustig's method uses only the derivative of the norm that we are applying the different functions to, he doesn't take into account the derivative of things like the TV and the Wavelet term that he uses, while in our code, we will attempt to do that.
+
+    The code will be split up into a few parts. The first is the grads.py code. This code will contain all of the gradients. After that, we have direction.py which is built to handle the diffusion directional parts. We also have transforms.py, which contains all of the math required for rapid and legible application of the transforms we are using, in addition to any scaling that needs to be done. Sampling.py contains all of the different methods of undersampling the data -- this will only be used in cases of retroundersampling data and thus will NOT be used in the final method. In addition, for testing, we may only actually need to run this once, in order to ensure that we are comparing apples to apples when we are running our analyses. Finally, we have recon_CS.py. This is the testing function that contains the demos that we require for proof-of-principle.
 
 \end{document}
